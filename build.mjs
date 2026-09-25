@@ -10,7 +10,6 @@ const required = [
   'css/base.css',
   'css/layout.css',
   'css/components.css',
-  'css/polish.css',
   'css/responsive.css',
   'js/data.js',
   'js/app.js',

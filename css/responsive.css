@@ -37,15 +37,8 @@
     letter-spacing: 0.08em;
   }
 
-  .date {
-    padding: var(--space-2);
-  }
-
   .nav {
-    margin-inline: calc(var(--space-4) * -1);
     margin-bottom: var(--space-5);
-    padding-inline: var(--space-4);
-    scroll-padding-inline: var(--space-4);
   }
 
   .nav button {
@@ -59,46 +52,6 @@
   .screen-title {
     margin-bottom: var(--space-5);
   }
-
-  .screen-title > .btn {
-    flex: 0 1 auto;
-  }
-
-  .district {
-    min-height: 0;
-  }
-}
-
-@media (max-width: 600px) {
-  .top {
-    align-items: flex-start;
-  }
-
-  .screen-title {
-    align-items: stretch;
-  }
-
-  .screen-title > .btn {
-    flex: 1 1 100%;
-  }
-
-  .actions > .btn,
-  .actions > label.btn {
-    flex: 1 1 calc(50% - var(--space-2));
-  }
-
-  .item > .btn {
-    width: 100%;
-  }
-
-  .toast {
-    right: max(var(--space-3), env(safe-area-inset-right));
-    bottom: max(var(--space-3), env(safe-area-inset-bottom));
-    left: max(var(--space-3), env(safe-area-inset-left));
-    width: auto;
-    max-width: none;
-    text-align: center;
-  }
 }
 
 @media (max-width: 480px) {
@@ -106,9 +59,8 @@
     padding-inline: var(--space-3);
   }
 
-  .date {
-    background: transparent;
-    border-color: transparent;
+  .top {
+    align-items: flex-start;
   }
 
   .date strong {
@@ -116,34 +68,12 @@
     font-size: var(--text-xs);
   }
 
-  .nav {
-    margin-inline: calc(var(--space-3) * -1);
-    padding-inline: var(--space-3);
-  }
-
-  .nav button {
-    min-height: 46px;
-  }
-
   .card {
     padding: var(--space-4);
-    border-radius: var(--radius-md);
-  }
-
-  .card::before {
-    left: var(--space-4);
   }
 
   .card h2 {
     font-size: 1.25rem;
-  }
-
-  .stats {
-    gap: var(--space-2);
-  }
-
-  .stat {
-    min-height: 4.5rem;
   }
 
   .map {
@@ -155,57 +85,25 @@
     flex-basis: 100%;
   }
 
-  .actions > .btn,
-  .actions > label.btn {
+  .actions > .btn {
     flex: 1 1 100%;
   }
 
   .event {
-    padding: var(--space-4);
-  }
-
-  .feedline {
-    padding-left: var(--space-4);
+    padding-left: var(--space-3);
   }
 
   .ledger {
-    gap: 0 var(--space-2);
+    gap: var(--space-3) var(--space-2);
     font-size: 0.75rem;
   }
 
   .modal {
     padding: var(--space-3);
   }
-
-  .modalbox {
-    padding: var(--space-5) var(--space-4);
-  }
-
-  .footer {
-    display: grid;
-  }
-}
-
-@media (max-width: 350px) {
-  .stats {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .top {
-    display: grid;
-  }
-
-  .date {
-    padding-left: 0;
-    text-align: left;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
   *,
   *::before,
   *::after {
