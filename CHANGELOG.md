@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- Deepened the charcoal-and-brass visual system with richer surface, line, shadow, and accent tokens
+- Added subtle page atmosphere and panel depth without external assets or network dependencies
+- Added a dedicated presentation-only polish layer for brand, navigation, cards, stats, buttons, decisions, ledgers, feeds, districts, dialogs, and toasts
+- Improved screen-title hierarchy and sticky navigation readability
+- Improved mobile action sizing, horizontal navigation, safe-area spacing, modal layout, and very-small-screen fallbacks
+- Preserved reduced-motion and forced-color accessibility behavior
+- Added mobile viewport-fit and browser theme metadata
+- Kept gameplay systems, balance, save schema, and simulation behavior unchanged
+
 ## 0.1.0
 
 Initial playable release.
