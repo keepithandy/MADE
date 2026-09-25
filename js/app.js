@@ -1,20 +1,348 @@
 const KEY='made-save-v1',months=['January','February','March','April','May','June','July','August','September','October','November','December'],tabs=['Life','Crew','City','Business','Money','Family','Records','Dynasty'];
+
 const pick=a=>a[Math.floor(Math.random()*a.length)], cash=n=>'$'+Math.round(n||0).toLocaleString('en-US');
-function fresh(name='Alex Moretti'){return{version:1,player:{name,age:18,health:90,stress:15,happiness:65,rep:8,respect:5,loyalty:35,influence:5,heat:2,rank:'Outsider',cash:4200,bank:0,alive:true,retired:false},calendar:{month:0,year:1984},family:[['Rosa','Mother',42,75],['Paolo','Father',45,55],['Mina','Sibling',15,72]].map(([n,r,a,c])=>({id:crypto.randomUUID(),name:n+' '+name.split(' ').at(-1),relation:r,age:a,closeness:c,trust:65})),children:[],crew:[],businesses:[],districts:districts.map((name,i)=>({name,influence:i===0?12:3,rival:25,heat:4})),rivals:rivals.map(name=>({name,boss:pick(first)+' '+pick(last),strength:50,hostility:25,relation:'Neutral'})),investigations:{local:2,organized:0,federal:0},event:null,history:[{year:1984,month:0,type:'personal',text:'Began a new chapter in New Carbone City.'}],dynasty:[],stats:{peak:4200,generations:0,territories:0},screen:'Life',turn:0,lastLedger:{}}}
-let s;try{s=JSON.parse(localStorage.getItem(KEY))}catch{}if(!s||s.version!==1)s=null;
-function save(){localStorage.setItem(KEY,JSON.stringify(s))}function log(type,text){s.history.unshift({year:s.calendar.year,month:s.calendar.month,type,text});if(s.history.length>800)s.history.pop()}
-function toast(t){let e=document.createElement('div');e.className='toast';e.textContent=t;document.body.append(e);setTimeout(()=>e.remove(),2000)}
-function eventMake(){let e=pick(eventTemplates);return{title:e[0],body:e[1],choices:e[2]}}
-function resolve(i){let e=s.event,c=e.choices[i]||'The chapter closed';s.player.happiness=Math.max(0,Math.min(100,s.player.happiness+(i===0?4:-2)));s.player.stress=Math.max(0,Math.min(100,s.player.stress+(i===2?4:-2)));s.player.loyalty=Math.max(0,Math.min(100,s.player.loyalty+[6,2,-4][i]));s.player.rep+=i===0?2:1;if(/fund|sponsor|gift|help/i.test(c))s.player.cash=Math.max(0,s.player.cash-800);if(/inheritance/i.test(e.title))s.player.cash+=2400;if(/rest|health/i.test(c))s.player.health=Math.min(100,s.player.health+7);log('personal',e.title+': '+c+'.');s.event=null;render()}
-function advance(n=1){for(let k=0;k<n;k++){if(!s.player.alive)break;s.calendar.month++;s.turn++;if(s.calendar.month===12){s.calendar.month=0;s.calendar.year++;s.player.age++;[...s.family,...s.children,...s.crew].forEach(x=>x.age++);if(s.player.age>64)s.player.health-=s.player.age>78?7:3;if(s.player.health<=0||s.player.age>=100){s.player.alive=false;s.event={title:'A life remembered',body:s.player.name+' died. Select a successor in Dynasty.',choices:[],death:true};s.dynasty.unshift({name:s.player.name,years:(s.calendar.year-s.player.age)+'–'+s.calendar.year,rank:s.player.rank})}}let biz=s.businesses.reduce((a,b)=>a+b.income-b.cost,0),org=s.crew.length*210+s.districts.reduce((a,d)=>a+Math.round(d.influence*2),0),expenses=s.crew.length*150+650,net=biz+org-expenses;s.player.cash+=net;let deposit=Math.min(Math.max(0,s.player.cash),Math.max(0,net*.12));s.player.cash-=deposit;s.player.bank+=deposit;s.lastLedger={bizIn:s.businesses.reduce((a,b)=>a+b.income,0),bizCost:s.businesses.reduce((a,b)=>a+b.cost,0),orgIn:org,expenses,net};s.player.stress=Math.max(0,Math.min(100,s.player.stress+(net<0?3:-1)));s.districts.forEach(d=>{d.influence=Math.max(0,Math.min(95,d.influence+(d.influence?Math.random()*.9-.15:0)));d.heat=Math.max(0,d.heat+(d.influence>35?.4:-.15))});s.investigations.local=Math.min(100,s.investigations.local+s.crew.length*.08-.08);s.investigations.organized=Math.min(100,s.investigations.organized+(s.player.rep>50?.18:.04));s.investigations.federal=Math.min(100,s.investigations.federal+(s.player.cash>200000?.12:.02));s.player.heat=Math.round((s.investigations.local+s.investigations.organized+s.investigations.federal)/3);let score=s.player.rep+s.player.influence+s.player.respect+s.crew.length*2+s.businesses.length*2;if(score>22)s.player.rank='Associate';if(score>42)s.player.rank='Soldier';if(score>65&&s.crew.length>=2)s.player.rank='Crew Leader';if(score>90&&s.businesses.length>=2)s.player.rank='Capo';if(score>135&&s.crew.length>=4)s.player.rank='Underboss';if(score>180&&s.businesses.length>=4)s.player.rank='Boss';if(!s.event&&Math.random()<.5)s.event=eventMake();s.stats.peak=Math.max(s.stats.peak,s.player.cash+s.player.bank+s.businesses.reduce((a,b)=>a+b.value,0));s.stats.territories=s.districts.filter(d=>d.influence>=50).length}save();render()}
-function act(cmd){let [k,id]=cmd.split(':'),p=s.player,msg='';if(k==='new'){s=fresh();save();render();return}if(k==='rest'){p.stress=Math.max(0,p.stress-14);p.health=Math.min(100,p.health+5);p.happiness=Math.min(100,p.happiness+2);msg='You took a needed pause.'}if(k==='recruit'){if(p.cash<900)return toast('You need $900.');p.cash-=900;let c={id:crypto.randomUUID(),name:pick(first)+' '+pick(last),age:24,role:'Associate',loyalty:65,skill:60,ambition:45,heat:15,trait:pick(['Loyal','Ambitious','Reckless','Calm','Greedy']),resentment:0};s.crew.push(c);log('organization',c.name+' joined as an associate.');msg=c.name+' joined.'}if(k==='promote'){let c=s.crew.find(x=>x.id===id);c.role='Crew Leader';c.loyalty=Math.min(100,c.loyalty+12);s.crew.filter(x=>x!==c).forEach(x=>x.resentment=(x.resentment||0)+4);p.respect+=2;msg=c.name+' promoted.'}if(k==='business'){let [name,price,income,cost]=businesses[+id];if(p.cash<price)return toast('Not enough cash.');p.cash-=price;s.businesses.push({id:crypto.randomUUID(),name,price,value:price,income,cost,manager:'Unassigned',district:pick(districts)});p.influence+=2;log('business','Acquired '+name);msg=name+' acquired.'}if(k==='sell'){let b=s.businesses.find(x=>x.id===id);p.cash+=b.value;s.businesses=s.businesses.filter(x=>x!==b);msg=b.name+' sold.'}if(k==='expand'||k==='consolidate'){let d=s.districts[+id],cost=k==='expand'?1200:500;if(p.cash<cost)return toast('Not enough cash.');p.cash-=cost;d.influence=Math.min(95,d.influence+(k==='expand'?10:4));d.heat=Math.max(0,d.heat+(k==='expand'?2:-9));p.influence++;msg=d.name+' standing changed.'}if(k==='family'){let f=[...s.family,...s.children].find(x=>x.id===id);p.cash=Math.max(0,p.cash-300);f.closeness=Math.min(100,f.closeness+14);f.trust=Math.min(100,f.trust+5);p.happiness=Math.min(100,p.happiness+4);msg='You made time for '+f.name+'.'}if(k==='child'){if(p.cash<1500)return toast('You need $1,500.');p.cash-=1500;let c={id:crypto.randomUUID(),name:pick(first)+' '+p.name.split(' ').at(-1),age:0,relation:'Child',closeness:70,trust:70};s.children.push(c);log('family',c.name+' was born.');msg='A new generation begins.'}if(k==='retire'){p.retired=true;p.rank='Retired';msg='You stepped back from leadership.'}if(k==='successor'){let t=[...s.children,...s.family,...s.crew].find(x=>x.id===id)||s.children[0]||s.family[0]||s.crew[0];if(!t)return toast('No successor available.');s.dynasty.unshift({name:p.name,years:(s.calendar.year-p.age)+'–'+s.calendar.year,rank:p.rank});s.player={...p,name:t.name,age:Math.max(18,t.age),health:90,stress:25,rep:Math.floor(p.rep*.55),respect:Math.floor(p.respect*.5),loyalty:Math.floor(p.loyalty*.6),influence:Math.floor(p.influence*.55),heat:Math.floor(p.heat*.4),rank:'Associate',cash:p.cash*.35,bank:p.bank*.55,alive:true,retired:false};s.crew=s.crew.filter(x=>x.id!==t.id);s.stats.generations++;s.event=null;msg=t.name+' carries the story forward.'}if(msg){log('personal',msg);save();toast(msg);render()}}
-function btn(label,cmd,cl='secondary'){return'<button class="btn '+cl+'" data-cmd="'+cmd+'">'+label+'</button>'}
-function card(title,html,extra=''){return'<section class="card"><h2>'+title+'</h2>'+html+extra+'</section>'}
-function stats(arr){return'<div class="stats">'+arr.map(([n,v,p])=>'<div class="stat"><small>'+n+'</small><b>'+v+'</b>'+(p===undefined?'':'<div class="bar '+(n==='Heat'?'red':'')+'"><i style="width:'+Math.max(0,Math.min(100,p))+'%"></i></div>')+'</div>').join('')+'</div>'}
-function entry(title,sub,buttons=''){return'<div class="item"><div class="row"><b>'+title+'</b>'+sub+'</div>'+buttons+'</div>'}
-function home(){let p=s.player,e=s.event,ev=e?'<div class="event"><div class="eyebrow">A DECISION AWAITS</div><h3>'+e.title+'</h3><p>'+e.body+'</p>'+(!e.death?e.choices.map((x,i)=>'<button class="choice" data-event="'+i+'">'+x+'</button>').join(''):'')+'</div>':'<div class="empty">No urgent matter. '+btn('Advance one month','advance','')+'</div>';return'<div class="grid"><div class="col">'+card(p.name+' <span class="pill">'+p.rank+'</span>','<p>New Carbone City · Age '+p.age+' · '+p.background+'</p>'+stats([['Health',p.health+'%',p.health],['Stress',p.stress+'%',p.stress],['Happiness',p.happiness+'%',p.happiness],['Reputation',p.rep],['Respect',p.respect],['Influence',p.influence],['Heat',p.heat+'%',p.heat],['Cash',cash(p.cash)]]))+card('This month',ev,'<div class="actions">'+btn('Advance month','advance','')+btn('Advance year','year')+btn('Rest','rest')+'</div>')+(p.heat>45?card('Investigation developing','<p>Pressure is rising. A quieter pace can reduce strain over time.</p>'):'')+'</div><div class="col">'+card('Financial snapshot','<div class="ledger"><div>Cash</div><b>'+cash(p.cash)+'</b><div>Bank</div><b>'+cash(p.bank)+'</b><div>Businesses</div><b>'+s.businesses.length+'</b><div>Monthly net</div><b>'+cash(s.lastLedger.net||0)+'</b></div>')+card('Recent history','<div class="feed">'+s.history.slice(0,6).map(h=>'<div class="feedline"><time>'+months[h.month]+' '+h.year+' · '+h.type+'</time>'+h.text+'</div>').join('')+'</div>')+card('City dossier',stats([['Crew',s.crew.length],['Businesses',s.businesses.length],['Family',s.family.length+s.children.length],['Districts',s.districts.length]]))+'</div></div>'}
-function screen(){let p=s.player;if(s.screen==='Life')return home();if(s.screen==='Crew')return'<div class="screen-title"><h1>Crew</h1>'+btn('Recruit · $900','recruit','')+'</div>'+card('Your organization','<p>People remember who is trusted with responsibility. Promotions can also create resentment.</p>'+stats([['Rank',p.rank],['Members',s.crew.length],['Loyalty',p.loyalty+'%',p.loyalty],['Respect',p.respect]])+'<div class="list">'+(s.crew.map(c=>entry(c.name+' <span class="pill">'+c.role+'</span>','<small>Age '+c.age+' · '+c.trait+' · Skill '+c.skill+' · Loyalty '+c.loyalty+'%</small>',btn('Promote','promote:'+c.id))).join('')||'<div class="empty">Your circle is still small. Recruit someone when you are ready.</div>')+'</div>');if(s.screen==='City')return'<div class="screen-title"><h1>New Carbone City</h1></div>'+card('District influence','<p>Build local influence through investment. High activity brings more attention.</p><div class="map">'+s.districts.map((d,i)=>'<div class="district"><strong>'+d.name+'</strong><small>Rival '+d.rival+'% · Heat '+Math.round(d.heat)+'%</small><div class="meter">Your influence · '+Math.round(d.influence)+'%</div><div class="bar"><i style="width:'+d.influence+'%"></i></div>'+btn('Invest · $1,200','expand:'+i)+btn('Consolidate · $500','consolidate:'+i)+'</div>').join('')+'</div>')+'<div class="grid" style="margin-top:16px">'+card('Rival organizations','<div class="list">'+s.rivals.map(r=>entry(r.name+' <span class="pill">'+r.relation+'</span>','<small>Leader '+r.boss+' · Strength '+r.strength+' · Hostility '+r.hostility+'</small>')).join('')+'</div>')+card('City outlook',stats([['Controlled',s.stats.territories],['Influence',p.influence],['Rivals',s.rivals.length],['Local attention',Math.round(s.investigations.local)+'%',s.investigations.local]]))+'</div>';if(s.screen==='Business')return'<div class="screen-title"><h1>Business</h1></div><div class="grid">'+card('Your portfolio',s.businesses.length?'<div class="list">'+s.businesses.map(b=>entry(b.name+' <span class="pill">'+b.district+'</span>','<small>Value '+cash(b.value)+' · Revenue '+cash(b.income)+'/mo · Costs '+cash(b.cost)+'/mo · Manager '+b.manager+'</small>',btn('Sell','sell:'+b.id))).join('')+'</div>':'<div class="empty">No businesses yet. Start with a neighborhood concern.</div>')+card('Opportunities','<div class="list">'+businesses.map(([n,c,r,o],i)=>entry(n,'<small>Price '+cash(c)+' · Revenue '+cash(r)+' · Costs '+cash(o)+'</small>',btn('Acquire '+cash(c),'business:'+i))).join('')+'</div>')+'</div>';if(s.screen==='Family')return'<div class="screen-title"><h1>Family</h1>'+btn('Welcome a child · $1,500','child','')+'</div><div class="grid">'+card('Family ties','<p>Family members have their own needs. Time and trust matter.</p><div class="list">'+[...s.family,...s.children].map(f=>entry(f.name+' <span class="pill">'+f.relation+'</span>','<small>Age '+f.age+' · Closeness '+f.closeness+'% · Trust '+f.trust+'%</small><div class="bar"><i style="width:'+f.closeness+'%"></i></div>',btn('Spend time · $300','family:'+f.id))).join('')+'</div>')+card('Next generation','<p>Children age each year. Retirement lets you choose a successor and continue as another member of the family.</p>'+stats([['Children',s.children.length],['Generations',s.stats.generations]]))+'</div>';if(s.screen==='Money')return'<div class="screen-title"><h1>Money</h1>'+btn('Save now','save','')+'</div><div class="grid">'+card('Monthly ledger','<div class="ledger"><div>Legitimate income</div><b>+'+cash(s.lastLedger.bizIn||0)+'</b><div>Organization income</div><b>+'+cash(s.lastLedger.orgIn||0)+'</b><div>Business costs</div><b>−'+cash(s.lastLedger.bizCost||0)+'</b><div>Living & crew expenses</div><b>−'+cash(s.lastLedger.expenses||650)+'</b><div>Monthly net</div><b>'+cash(s.lastLedger.net||0)+'</b></div>')+card('Assets & saves','<div class="ledger"><div>Cash</div><b>'+cash(p.cash)+'</b><div>Bank</div><b>'+cash(p.bank)+'</b><div>Business value</div><b>'+cash(s.businesses.reduce((a,b)=>a+b.value,0))+'</b><div>Peak net worth</div><b>'+cash(s.stats.peak)+'</b></div><div class="actions">'+btn('Export save','export','')+'<label class="btn secondary">Import save<input id="import" type="file" accept="application/json" hidden></label>'+btn('Reset','reset','danger')+'</div>')+card('Investigation pressure','<p>Attention develops gradually as influence, crew size, and wealth grow.</p>'+stats(Object.entries(s.investigations).map(([n,v])=>[n,Math.round(v)+'%',v])))+'</div>';if(s.screen==='Records')return'<div class="screen-title"><h1>Records</h1></div>'+card('Chronicle','<div class="feed">'+s.history.map(h=>'<div class="feedline"><time>'+months[h.month]+' '+h.year+' · '+h.type+'</time>'+h.text+'</div>').join('')+'</div>');return'<div class="screen-title"><h1>Dynasty</h1></div><div class="grid">'+card('Family line',s.dynasty.map(d=>entry(d.name+' <span class="pill">'+d.rank+'</span>','<small>'+d.years+'</small>')).join('')+'<div style="padding:12px;color:var(--gold)">↓ '+p.name+'</div>')+card('Succession','<p>Retirement is a strategic ending. Choose a successor to continue the family with a portion of the estate.</p><div class="list">'+((p.retired||!p.alive)?[...s.children,...s.family,...s.crew].map(x=>entry(x.name,'<small>Age '+x.age+' · '+(x.relation||x.role||'Successor')+'</small>',btn('Continue as '+x.name,'successor:'+x.id,'') )).join(''):'<p class="muted">Select retirement to begin a handoff.</p>')+'</div>'+btn('Retire from leadership','retire'))+'</div>'}
-function render(){if(!s){document.querySelector('#app').innerHTML='<div class="modal"><div class="modalbox"><div class="brand">MADE</div><p class="eyebrow">A CRIME DYNASTY LIFE SIMULATOR</p><h2>Start as nobody.</h2><p class="muted">Build a name, a family, and a legacy in New Carbone City.</p><label>Your name<input id="name" value="Alex Moretti" maxlength="36"></label><label>Background<select id="bg"><option>Working Class</option><option>Family Connections</option><option>Street Raised</option><option>Business Family</option><option>Troubled Home</option><option>Ambitious Outsider</option></select></label><label>Difficulty<select id="diff"><option>Story</option><option selected>Standard</option><option>Hard</option></select></label><button class="btn" data-cmd="new">Begin</button></div></div>';return}let d=s.calendar;document.querySelector('#app').innerHTML='<main class="shell"><header class="top"><div><div class="brand">MADE</div><div class="subbrand">A CRIME DYNASTY LIFE SIMULATOR</div></div><div class="date"><strong>'+months[d.month].toUpperCase()+' '+d.year+'</strong>AGE '+s.player.age+'</div></header><nav class="nav" aria-label="Main navigation">'+tabs.map(t=>'<button class="'+(s.screen===t?'active':'')+'" data-tab="'+t+'">'+t.toUpperCase()+'</button>').join('')+'</nav>'+screen()+'<footer class="footer"><span>NEW CARBONE CITY · PRIVATE LEDGER</span><span>v0.1.0</span></footer></main>'}
-document.addEventListener('click',e=>{let b=e.target.closest('[data-tab]');if(b){s.screen=b.dataset.tab;save();render();return}b=e.target.closest('[data-cmd]');if(b){let c=b.dataset.cmd;if(c==='advance')return advance();if(c==='year')return advance(12);if(c==='save'){save();toast('Game saved.');return}if(c==='export'){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)],{type:'application/json'}));a.download='made-save.json';a.click();return}if(c==='reset'){if(confirm('Erase this local game and start again?')){localStorage.removeItem(KEY);s=null;render()}return}if(c==='new'){let name=document.querySelector('#name')?.value.trim()||'Alex Moretti',bg=document.querySelector('#bg')?.value||'Working Class',diff=document.querySelector('#diff')?.value||'Standard';s=fresh(name);s.player.background=bg;s.player.difficulty=diff;save();render();return}act(c);return}b=e.target.closest('[data-event]');if(b)resolve(+b.dataset.event)});
-document.addEventListener('change',e=>{if(e.target.id==='import'){let f=e.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(x.version!==1||!x.player||!x.districts||!x.calendar)throw Error();s=x;save();render();toast('Save imported.')}catch{toast('That save file is not valid.')}};r.readAsText(f)}});
+
+function fresh(name='Alex Moretti') {
+  return {
+    version:1,player: {
+      name,age:18,health:90,stress:15,happiness:65,rep:8,respect:5,loyalty:35,influence:5,heat:2,rank:'Outsider',cash:4200,bank:0,alive:true,retired:false
+    },calendar: {
+      month:0,year:1984
+    },family:[['Rosa','Mother',42,75],['Paolo','Father',45,55],['Mina','Sibling',15,72]].map(([n,r,a,c])=>( {
+      id:crypto.randomUUID(),name:n+' '+name.split(' ').at(-1),relation:r,age:a,closeness:c,trust:65
+    })),children:[],crew:[],businesses:[],districts:districts.map((name,i)=>( {
+      name,influence:i===0?12:3,rival:25,heat:4
+    })),rivals:rivals.map(name=>( {
+      name,boss:pick(first)+' '+pick(last),strength:50,hostility:25,relation:'Neutral'
+    })),investigations: {
+      local:2,organized:0,federal:0
+    },event:null,history:[ {
+      year:1984,month:0,type:'personal',text:'Began a new chapter in New Carbone City.'
+    }],dynasty:[],stats: {
+      peak:4200,generations:0,territories:0
+    },screen:'Life',turn:0,lastLedger: {
+    }
+  }
+}
+
+let s;
+try {
+  s=JSON.parse(localStorage.getItem(KEY))
+}
+catch {
+}
+if(!s||s.version!==1)s=null;
+
+function save() {
+  localStorage.setItem(KEY,JSON.stringify(s))
+}
+function log(type,text) {
+  s.history.unshift( {
+    year:s.calendar.year,month:s.calendar.month,type,text
+  });
+  if(s.history.length>800)s.history.pop()
+}
+
+function toast(t) {
+  let e=document.createElement('div');
+  e.className='toast';
+  e.textContent=t;
+  document.body.append(e);
+  setTimeout(()=>e.remove(),2000)
+}
+
+function eventMake() {
+  let e=pick(eventTemplates);
+  return {
+    title:e[0],body:e[1],choices:e[2]
+  }
+}
+
+function resolve(i) {
+  let e=s.event,c=e.choices[i]||'The chapter closed';
+  s.player.happiness=Math.max(0,Math.min(100,s.player.happiness+(i===0?4:-2)));
+  s.player.stress=Math.max(0,Math.min(100,s.player.stress+(i===2?4:-2)));
+  s.player.loyalty=Math.max(0,Math.min(100,s.player.loyalty+[6,2,-4][i]));
+  s.player.rep+=i===0?2:1;
+  if(/fund|sponsor|gift|help/i.test(c))s.player.cash=Math.max(0,s.player.cash-800);
+  if(/inheritance/i.test(e.title))s.player.cash+=2400;
+  if(/rest|health/i.test(c))s.player.health=Math.min(100,s.player.health+7);
+  log('personal',e.title+': '+c+'.');
+  s.event=null;
+  render()
+}
+
+function advance(n=1) {
+  for(let k=0;
+  k<n;
+  k++) {
+    if(!s.player.alive)break;
+    s.calendar.month++;
+    s.turn++;
+    if(s.calendar.month===12) {
+      s.calendar.month=0;
+      s.calendar.year++;
+      s.player.age++;
+      [...s.family,...s.children,...s.crew].forEach(x=>x.age++);
+      if(s.player.age>64)s.player.health-=s.player.age>78?7:3;
+      if(s.player.health<=0||s.player.age>=100) {
+        s.player.alive=false;
+        s.event= {
+          title:'A life remembered',body:s.player.name+' died. Select a successor in Dynasty.',choices:[],death:true
+        };
+        s.dynasty.unshift( {
+          name:s.player.name,years:(s.calendar.year-s.player.age)+'–'+s.calendar.year,rank:s.player.rank
+        })
+      }
+    }
+    let biz=s.businesses.reduce((a,b)=>a+b.income-b.cost,0),org=s.crew.length*210+s.districts.reduce((a,d)=>a+Math.round(d.influence*2),0),expenses=s.crew.length*150+650,net=biz+org-expenses;
+    s.player.cash+=net;
+    let deposit=Math.min(Math.max(0,s.player.cash),Math.max(0,net*.12));
+    s.player.cash-=deposit;
+    s.player.bank+=deposit;
+    s.lastLedger= {
+      bizIn:s.businesses.reduce((a,b)=>a+b.income,0),bizCost:s.businesses.reduce((a,b)=>a+b.cost,0),orgIn:org,expenses,net
+    };
+    s.player.stress=Math.max(0,Math.min(100,s.player.stress+(net<0?3:-1)));
+    s.districts.forEach(d=> {
+      d.influence=Math.max(0,Math.min(95,d.influence+(d.influence?Math.random()*.9-.15:0)));
+      d.heat=Math.max(0,d.heat+(d.influence>35?.4:-.15))
+    });
+    s.investigations.local=Math.min(100,s.investigations.local+s.crew.length*.08-.08);
+    s.investigations.organized=Math.min(100,s.investigations.organized+(s.player.rep>50?.18:.04));
+    s.investigations.federal=Math.min(100,s.investigations.federal+(s.player.cash>200000?.12:.02));
+    s.player.heat=Math.round((s.investigations.local+s.investigations.organized+s.investigations.federal)/3);
+    let score=s.player.rep+s.player.influence+s.player.respect+s.crew.length*2+s.businesses.length*2;
+    if(score>22)s.player.rank='Associate';
+    if(score>42)s.player.rank='Soldier';
+    if(score>65&&s.crew.length>=2)s.player.rank='Crew Leader';
+    if(score>90&&s.businesses.length>=2)s.player.rank='Capo';
+    if(score>135&&s.crew.length>=4)s.player.rank='Underboss';
+    if(score>180&&s.businesses.length>=4)s.player.rank='Boss';
+    if(!s.event&&Math.random()<.5)s.event=eventMake();
+    s.stats.peak=Math.max(s.stats.peak,s.player.cash+s.player.bank+s.businesses.reduce((a,b)=>a+b.value,0));
+    s.stats.territories=s.districts.filter(d=>d.influence>=50).length
+  }
+  save();
+  render()
+}
+
+function act(cmd) {
+  let [k,id]=cmd.split(':'),p=s.player,msg='';
+  if(k==='new') {
+    s=fresh();
+    save();
+    render();
+    return
+  }
+  if(k==='rest') {
+    p.stress=Math.max(0,p.stress-14);
+    p.health=Math.min(100,p.health+5);
+    p.happiness=Math.min(100,p.happiness+2);
+    msg='You took a needed pause.'
+  }
+  if(k==='recruit') {
+    if(p.cash<900)return toast('You need $900.');
+    p.cash-=900;
+    let c= {
+      id:crypto.randomUUID(),name:pick(first)+' '+pick(last),age:24,role:'Associate',loyalty:65,skill:60,ambition:45,heat:15,trait:pick(['Loyal','Ambitious','Reckless','Calm','Greedy']),resentment:0
+    };
+    s.crew.push(c);
+    log('organization',c.name+' joined as an associate.');
+    msg=c.name+' joined.'
+  }
+  if(k==='promote') {
+    let c=s.crew.find(x=>x.id===id);
+    c.role='Crew Leader';
+    c.loyalty=Math.min(100,c.loyalty+12);
+    s.crew.filter(x=>x!==c).forEach(x=>x.resentment=(x.resentment||0)+4);
+    p.respect+=2;
+    msg=c.name+' promoted.'
+  }
+  if(k==='business') {
+    let [name,price,income,cost]=businesses[+id];
+    if(p.cash<price)return toast('Not enough cash.');
+    p.cash-=price;
+    s.businesses.push( {
+      id:crypto.randomUUID(),name,price,value:price,income,cost,manager:'Unassigned',district:pick(districts)
+    });
+    p.influence+=2;
+    log('business','Acquired '+name);
+    msg=name+' acquired.'
+  }
+  if(k==='sell') {
+    let b=s.businesses.find(x=>x.id===id);
+    p.cash+=b.value;
+    s.businesses=s.businesses.filter(x=>x!==b);
+    msg=b.name+' sold.'
+  }
+  if(k==='expand'||k==='consolidate') {
+    let d=s.districts[+id],cost=k==='expand'?1200:500;
+    if(p.cash<cost)return toast('Not enough cash.');
+    p.cash-=cost;
+    d.influence=Math.min(95,d.influence+(k==='expand'?10:4));
+    d.heat=Math.max(0,d.heat+(k==='expand'?2:-9));
+    p.influence++;
+    msg=d.name+' standing changed.'
+  }
+  if(k==='family') {
+    let f=[...s.family,...s.children].find(x=>x.id===id);
+    p.cash=Math.max(0,p.cash-300);
+    f.closeness=Math.min(100,f.closeness+14);
+    f.trust=Math.min(100,f.trust+5);
+    p.happiness=Math.min(100,p.happiness+4);
+    msg='You made time for '+f.name+'.'
+  }
+  if(k==='child') {
+    if(p.cash<1500)return toast('You need $1,500.');
+    p.cash-=1500;
+    let c= {
+      id:crypto.randomUUID(),name:pick(first)+' '+p.name.split(' ').at(-1),age:0,relation:'Child',closeness:70,trust:70
+    };
+    s.children.push(c);
+    log('family',c.name+' was born.');
+    msg='A new generation begins.'
+  }
+  if(k==='retire') {
+    p.retired=true;
+    p.rank='Retired';
+    msg='You stepped back from leadership.'
+  }
+  if(k==='successor') {
+    let t=[...s.children,...s.family,...s.crew].find(x=>x.id===id)||s.children[0]||s.family[0]||s.crew[0];
+    if(!t)return toast('No successor available.');
+    s.dynasty.unshift( {
+      name:p.name,years:(s.calendar.year-p.age)+'–'+s.calendar.year,rank:p.rank
+    });
+    s.player= {
+      ...p,name:t.name,age:Math.max(18,t.age),health:90,stress:25,rep:Math.floor(p.rep*.55),respect:Math.floor(p.respect*.5),loyalty:Math.floor(p.loyalty*.6),influence:Math.floor(p.influence*.55),heat:Math.floor(p.heat*.4),rank:'Associate',cash:p.cash*.35,bank:p.bank*.55,alive:true,retired:false
+    };
+    s.crew=s.crew.filter(x=>x.id!==t.id);
+    s.stats.generations++;
+    s.event=null;
+    msg=t.name+' carries the story forward.'
+  }
+  if(msg) {
+    log('personal',msg);
+    save();
+    toast(msg);
+    render()
+  }
+}
+
+function btn(label,cmd,cl='secondary') {
+  return'<button class="btn '+cl+'" data-cmd="'+cmd+'">'+label+'</button>'
+}
+
+function card(title,html,extra='') {
+  return'<section class="card"><h2>'+title+'</h2>'+html+extra+'</section>'
+}
+
+function stats(arr) {
+  return'<div class="stats">'+arr.map(([n,v,p])=>'<div class="stat"><small>'+n+'</small><b>'+v+'</b>'+(p===undefined?'':'<div class="bar '+(n==='Heat'?'red':'')+'"><i style="width:'+Math.max(0,Math.min(100,p))+'%"></i></div>')+'</div>').join('')+'</div>'
+}
+
+function entry(title,sub,buttons='') {
+  return'<div class="item"><div class="row"><b>'+title+'</b>'+sub+'</div>'+buttons+'</div>'
+}
+
+function home() {
+  let p=s.player,e=s.event,ev=e?'<div class="event"><div class="eyebrow">A DECISION AWAITS</div><h3>'+e.title+'</h3><p>'+e.body+'</p>'+(!e.death?e.choices.map((x,i)=>'<button class="choice" data-event="'+i+'">'+x+'</button>').join(''):'')+'</div>':'<div class="empty">No urgent matter. '+btn('Advance one month','advance','')+'</div>';
+  return'<div class="grid"><div class="col">'+card(p.name+' <span class="pill">'+p.rank+'</span>','<p>New Carbone City · Age '+p.age+' · '+p.background+'</p>'+stats([['Health',p.health+'%',p.health],['Stress',p.stress+'%',p.stress],['Happiness',p.happiness+'%',p.happiness],['Reputation',p.rep],['Respect',p.respect],['Influence',p.influence],['Heat',p.heat+'%',p.heat],['Cash',cash(p.cash)]]))+card('This month',ev,'<div class="actions">'+btn('Advance month','advance','')+btn('Advance year','year')+btn('Rest','rest')+'</div>')+(p.heat>45?card('Investigation developing','<p>Pressure is rising. A quieter pace can reduce strain over time.</p>'):'')+'</div><div class="col">'+card('Financial snapshot','<div class="ledger"><div>Cash</div><b>'+cash(p.cash)+'</b><div>Bank</div><b>'+cash(p.bank)+'</b><div>Businesses</div><b>'+s.businesses.length+'</b><div>Monthly net</div><b>'+cash(s.lastLedger.net||0)+'</b></div>')+card('Recent history','<div class="feed">'+s.history.slice(0,6).map(h=>'<div class="feedline"><time>'+months[h.month]+' '+h.year+' · '+h.type+'</time>'+h.text+'</div>').join('')+'</div>')+card('City dossier',stats([['Crew',s.crew.length],['Businesses',s.businesses.length],['Family',s.family.length+s.children.length],['Districts',s.districts.length]]))+'</div></div>'
+}
+
+function screen() {
+  let p=s.player;
+  if(s.screen==='Life')return home();
+  if(s.screen==='Crew')return'<div class="screen-title"><h1>Crew</h1>'+btn('Recruit · $900','recruit','')+'</div>'+card('Your organization','<p>People remember who is trusted with responsibility. Promotions can also create resentment.</p>'+stats([['Rank',p.rank],['Members',s.crew.length],['Loyalty',p.loyalty+'%',p.loyalty],['Respect',p.respect]])+'<div class="list">'+(s.crew.map(c=>entry(c.name+' <span class="pill">'+c.role+'</span>','<small>Age '+c.age+' · '+c.trait+' · Skill '+c.skill+' · Loyalty '+c.loyalty+'%</small>',btn('Promote','promote:'+c.id))).join('')||'<div class="empty">Your circle is still small. Recruit someone when you are ready.</div>')+'</div>');
+  if(s.screen==='City')return'<div class="screen-title"><h1>New Carbone City</h1></div>'+card('District influence','<p>Build local influence through investment. High activity brings more attention.</p><div class="map">'+s.districts.map((d,i)=>'<div class="district"><strong>'+d.name+'</strong><small>Rival '+d.rival+'% · Heat '+Math.round(d.heat)+'%</small><div class="meter">Your influence · '+Math.round(d.influence)+'%</div><div class="bar"><i style="width:'+d.influence+'%"></i></div>'+btn('Invest · $1,200','expand:'+i)+btn('Consolidate · $500','consolidate:'+i)+'</div>').join('')+'</div>')+'<div class="grid" style="margin-top:16px">'+card('Rival organizations','<div class="list">'+s.rivals.map(r=>entry(r.name+' <span class="pill">'+r.relation+'</span>','<small>Leader '+r.boss+' · Strength '+r.strength+' · Hostility '+r.hostility+'</small>')).join('')+'</div>')+card('City outlook',stats([['Controlled',s.stats.territories],['Influence',p.influence],['Rivals',s.rivals.length],['Local attention',Math.round(s.investigations.local)+'%',s.investigations.local]]))+'</div>';
+  if(s.screen==='Business')return'<div class="screen-title"><h1>Business</h1></div><div class="grid">'+card('Your portfolio',s.businesses.length?'<div class="list">'+s.businesses.map(b=>entry(b.name+' <span class="pill">'+b.district+'</span>','<small>Value '+cash(b.value)+' · Revenue '+cash(b.income)+'/mo · Costs '+cash(b.cost)+'/mo · Manager '+b.manager+'</small>',btn('Sell','sell:'+b.id))).join('')+'</div>':'<div class="empty">No businesses yet. Start with a neighborhood concern.</div>')+card('Opportunities','<div class="list">'+businesses.map(([n,c,r,o],i)=>entry(n,'<small>Price '+cash(c)+' · Revenue '+cash(r)+' · Costs '+cash(o)+'</small>',btn('Acquire '+cash(c),'business:'+i))).join('')+'</div>')+'</div>';
+  if(s.screen==='Family')return'<div class="screen-title"><h1>Family</h1>'+btn('Welcome a child · $1,500','child','')+'</div><div class="grid">'+card('Family ties','<p>Family members have their own needs. Time and trust matter.</p><div class="list">'+[...s.family,...s.children].map(f=>entry(f.name+' <span class="pill">'+f.relation+'</span>','<small>Age '+f.age+' · Closeness '+f.closeness+'% · Trust '+f.trust+'%</small><div class="bar"><i style="width:'+f.closeness+'%"></i></div>',btn('Spend time · $300','family:'+f.id))).join('')+'</div>')+card('Next generation','<p>Children age each year. Retirement lets you choose a successor and continue as another member of the family.</p>'+stats([['Children',s.children.length],['Generations',s.stats.generations]]))+'</div>';
+  if(s.screen==='Money')return'<div class="screen-title"><h1>Money</h1>'+btn('Save now','save','')+'</div><div class="grid">'+card('Monthly ledger','<div class="ledger"><div>Legitimate income</div><b>+'+cash(s.lastLedger.bizIn||0)+'</b><div>Organization income</div><b>+'+cash(s.lastLedger.orgIn||0)+'</b><div>Business costs</div><b>−'+cash(s.lastLedger.bizCost||0)+'</b><div>Living & crew expenses</div><b>−'+cash(s.lastLedger.expenses||650)+'</b><div>Monthly net</div><b>'+cash(s.lastLedger.net||0)+'</b></div>')+card('Assets & saves','<div class="ledger"><div>Cash</div><b>'+cash(p.cash)+'</b><div>Bank</div><b>'+cash(p.bank)+'</b><div>Business value</div><b>'+cash(s.businesses.reduce((a,b)=>a+b.value,0))+'</b><div>Peak net worth</div><b>'+cash(s.stats.peak)+'</b></div><div class="actions">'+btn('Export save','export','')+'<label class="btn secondary">Import save<input id="import" type="file" accept="application/json" hidden></label>'+btn('Reset','reset','danger')+'</div>')+card('Investigation pressure','<p>Attention develops gradually as influence, crew size, and wealth grow.</p>'+stats(Object.entries(s.investigations).map(([n,v])=>[n,Math.round(v)+'%',v])))+'</div>';
+  if(s.screen==='Records')return'<div class="screen-title"><h1>Records</h1></div>'+card('Chronicle','<div class="feed">'+s.history.map(h=>'<div class="feedline"><time>'+months[h.month]+' '+h.year+' · '+h.type+'</time>'+h.text+'</div>').join('')+'</div>');
+  return'<div class="screen-title"><h1>Dynasty</h1></div><div class="grid">'+card('Family line',s.dynasty.map(d=>entry(d.name+' <span class="pill">'+d.rank+'</span>','<small>'+d.years+'</small>')).join('')+'<div style="padding:12px;color:var(--gold)">↓ '+p.name+'</div>')+card('Succession','<p>Retirement is a strategic ending. Choose a successor to continue the family with a portion of the estate.</p><div class="list">'+((p.retired||!p.alive)?[...s.children,...s.family,...s.crew].map(x=>entry(x.name,'<small>Age '+x.age+' · '+(x.relation||x.role||'Successor')+'</small>',btn('Continue as '+x.name,'successor:'+x.id,'') )).join(''):'<p class="muted">Select retirement to begin a handoff.</p>')+'</div>'+btn('Retire from leadership','retire'))+'</div>'
+}
+
+function render() {
+  if(!s) {
+    document.querySelector('#app').innerHTML='<div class="modal"><div class="modalbox"><div class="brand">MADE</div><p class="eyebrow">A CRIME DYNASTY LIFE SIMULATOR</p><h2>Start as nobody.</h2><p class="muted">Build a name, a family, and a legacy in New Carbone City.</p><label>Your name<input id="name" value="Alex Moretti" maxlength="36"></label><label>Background<select id="bg"><option>Working Class</option><option>Family Connections</option><option>Street Raised</option><option>Business Family</option><option>Troubled Home</option><option>Ambitious Outsider</option></select></label><label>Difficulty<select id="diff"><option>Story</option><option selected>Standard</option><option>Hard</option></select></label><button class="btn" data-cmd="new">Begin</button></div></div>';
+    return
+  }
+  let d=s.calendar;
+  document.querySelector('#app').innerHTML='<main class="shell"><header class="top"><div><div class="brand">MADE</div><div class="subbrand">A CRIME DYNASTY LIFE SIMULATOR</div></div><div class="date"><strong>'+months[d.month].toUpperCase()+' '+d.year+'</strong>AGE '+s.player.age+'</div></header><nav class="nav" aria-label="Main navigation">'+tabs.map(t=>'<button class="'+(s.screen===t?'active':'')+'" data-tab="'+t+'">'+t.toUpperCase()+'</button>').join('')+'</nav>'+screen()+'<footer class="footer"><span>NEW CARBONE CITY · PRIVATE LEDGER</span><span>v0.1.0</span></footer></main>'
+}
+
+document.addEventListener('click',e=> {
+  let b=e.target.closest('[data-tab]');
+  if(b) {
+    s.screen=b.dataset.tab;
+    save();
+    render();
+    return
+  }
+  b=e.target.closest('[data-cmd]');
+  if(b) {
+    let c=b.dataset.cmd;
+    if(c==='advance')return advance();
+    if(c==='year')return advance(12);
+    if(c==='save') {
+      save();
+      toast('Game saved.');
+      return
+    }
+    if(c==='export') {
+      let a=document.createElement('a');
+      a.href=URL.createObjectURL(new Blob([JSON.stringify(s,null,2)], {
+        type:'application/json'
+      }));
+      a.download='made-save.json';
+      a.click();
+      return
+    }
+    if(c==='reset') {
+      if(confirm('Erase this local game and start again?')) {
+        localStorage.removeItem(KEY);
+        s=null;
+        render()
+      }
+      return
+    }
+    if(c==='new') {
+      let name=document.querySelector('#name')?.value.trim()||'Alex Moretti',bg=document.querySelector('#bg')?.value||'Working Class',diff=document.querySelector('#diff')?.value||'Standard';
+      s=fresh(name);
+      s.player.background=bg;
+      s.player.difficulty=diff;
+      save();
+      render();
+      return
+    }
+    act(c);
+    return
+  }
+  b=e.target.closest('[data-event]');
+  if(b)resolve(+b.dataset.event)
+});
+
+document.addEventListener('change',e=> {
+  if(e.target.id==='import') {
+    let f=e.target.files[0];
+    if(!f)return;
+    let r=new FileReader();
+    r.onload=()=> {
+      try {
+        let x=JSON.parse(r.result);
+        if(x.version!==1||!x.player||!x.districts||!x.calendar)throw Error();
+        s=x;
+        save();
+        render();
+        toast('Save imported.')
+      }
+      catch {
+        toast('That save file is not valid.')
+      }
+    };
+    r.readAsText(f)
+  }
+});
+
 render();
