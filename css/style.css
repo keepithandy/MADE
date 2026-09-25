@@ -1,21 +1,22 @@
 :root {
-  --bg:#171715;
-  --panel:#201f1b;
-  --panel2:#282721;
-  --line:#3b392f;
-  --ink:#eee9dc;
-  --muted:#a8a18f;
-  --gold:#c9a967;
-  --red:#bb6257;
-  --green:#8aaa78;
-  --shadow:0 12px 30px #0003
+  --bg:#151513;
+  --panel:#24221d;
+  --panel2:#2d2a23;
+  --line:#464235;
+  --ink:#f1ecdf;
+  --muted:#b4aa96;
+  --gold:#d2b36d;
+  --red:#c86c60;
+  --green:#91b17f;
+  --shadow:0 14px 34px #0006
 }
 * {
   box-sizing:border-box
 }
 body {
   margin:0;
-  background:var(--bg);
+  background:linear-gradient(145deg,#151513 0%,#1b1915 100%);
+  min-height:100vh;
   color:var(--ink);
   font:15px Arial,sans-serif
 }
@@ -407,4 +408,3 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 }
-
