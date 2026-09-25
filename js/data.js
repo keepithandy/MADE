@@ -1,9 +1,9 @@
-export const districts=['Northside','West End','Downtown','Harbor District','Southside','East Market','Industrial Ward','Old Quarter'];
-export const businesses=[['Corner Restaurant',18000,3600,1450],['Neighborhood Bar',26000,4800,2100],['Auto Shop',22000,3900,1750],['Trucking Company',62000,9400,5100],['Hotel',145000,19800,12600],['Real Estate Office',85000,14200,6200],['Music Venue',52000,10600,5900],['Market',14000,2900,1050],['Construction Firm',93000,16300,9200],['Warehouse Lease',38000,7200,3900],['Bookshop',11000,1800,800],['Laundromat',19000,3500,1300],['Catering Company',28000,5100,2400],['Marina',125000,17400,11400],['Event Hall',68000,12800,7400],['Apartment Block',185000,22600,15100],['Bakery',16000,3200,1200],['Taxi Cooperative',45000,7600,4200],['Furniture Store',32000,5400,2900],['Logistics Group',210000,28600,18100]];
-export const first=['Marco','Elena','Anthony','Sofia','Benny','Rosa','Vincent','Mara','Frankie','Lucia','Nico','Celia','Tommaso','Ada','Carlo','Lena','Dante','Mira','Sal','Inez','Rafael','Gia','Paul','Tessa','Jonah','Mina','Luca','Nadia'];
-export const last=['Moretti','Russo','Bellini','Marino','Costa','Vescari','Romano','Greco','Ferraro','Conti','DeLuca','Serrano','Valenti','Caruso','Bianchi','Rinaldi','Santoro','Esposito','Lombardi','Orsini'];
-export const rivals=['The Bellandi Circle','Northline Union','Vescari Group'];
-export const eventTemplates=[
+const districts=['Northside','West End','Downtown','Harbor District','Southside','East Market','Industrial Ward','Old Quarter'];
+const businesses=[['Corner Restaurant',18000,3600,1450],['Neighborhood Bar',26000,4800,2100],['Auto Shop',22000,3900,1750],['Trucking Company',62000,9400,5100],['Hotel',145000,19800,12600],['Real Estate Office',85000,14200,6200],['Music Venue',52000,10600,5900],['Market',14000,2900,1050],['Construction Firm',93000,16300,9200],['Warehouse Lease',38000,7200,3900],['Bookshop',11000,1800,800],['Laundromat',19000,3500,1300],['Catering Company',28000,5100,2400],['Marina',125000,17400,11400],['Event Hall',68000,12800,7400],['Apartment Block',185000,22600,15100],['Bakery',16000,3200,1200],['Taxi Cooperative',45000,7600,4200],['Furniture Store',32000,5400,2900],['Logistics Group',210000,28600,18100]];
+const first=['Marco','Elena','Anthony','Sofia','Benny','Rosa','Vincent','Mara','Frankie','Lucia','Nico','Celia','Tommaso','Ada','Carlo','Lena','Dante','Mira','Sal','Inez','Rafael','Gia','Paul','Tessa','Jonah','Mina','Luca','Nadia'];
+const last=['Moretti','Russo','Bellini','Marino','Costa','Vescari','Romano','Greco','Ferraro','Conti','DeLuca','Serrano','Valenti','Caruso','Bianchi','Rinaldi','Santoro','Esposito','Lombardi','Orsini'];
+const rivals=['The Bellandi Circle','Northline Union','Vescari Group'];
+const eventTemplates=[
 ['A familiar face','An old friend stops by with a small opportunity. They remember who showed up when it mattered.',['Hear them out','Offer a little help','Wish them well']],
 ['A family request','Someone close to you needs support, and the timing is difficult.',['Make time for them','Send money','Put it off']],
 ['A quiet opening','A local owner is ready to sell before the next lease comes due.',['Take a closer look','Ask a partner to review it','Pass for now']],
@@ -55,7 +55,7 @@ export const eventTemplates=[
 ['A succession plan','More than one person may be ready to carry your name forward. A conversation now could spare pain later.',['Start the conversation','Ask an elder to mediate','Wait until next year']],
 ['A second chance','Someone asks for a chance to prove they have grown beyond an old mistake.',['Offer measured trust','Set a small first step','Wish them well from afar']]
 ];
-export const jobs=[
+const jobs=[
 ['Courier arrangement',600,5,'organization'],['Market stall partnership',780,3,'legitimate'],
 ['Neighborhood repair contract',950,2,'legitimate'],['Harbor supply commission',1300,7,'organization'],
 ['Evening event staffing',720,2,'legitimate'],['Warehouse inventory review',1100,5,'organization'],
@@ -72,7 +72,7 @@ export const jobs=[
 ['Fleet maintenance agreement',1670,3,'legitimate'],['Neighborhood investment pitch',1190,4,'legitimate'],
 ['Merchant association role',810,2,'legitimate'],['Private negotiation retainer',1730,9,'organization']
 ];
-export const relationshipSituations=[
+const relationshipSituations=[
 ['An overdue visit','A relative says it has been too long since you sat down together.'],
 ['A missed birthday','Someone close noticed your absence at an important celebration.'],
 ['A difficult loan','A family member needs help covering an unexpected expense.'],

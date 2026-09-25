@@ -13,3 +13,4 @@ Initial playable release.
 - Added abstract legal outcomes, prison months, business management, rival meetings, and monthly action limits
 - Added thirty rotating opportunities, forty family situations, event eligibility, and remembered choices
 - Added automatic local saves plus JSON import and export
+- Split the deliverable into a small HTML shell, external CSS, data layer, application layer, and connected systems layer

@@ -29,14 +29,19 @@ Progress saves automatically in browser localStorage. The Money screen includes 
 
 ## Project structure
 
-- index.html — standalone, double-clickable game
-- css/style.css — responsive interface
-- js/app.js — simulation, actions, rendering, and saves
-- js/data.js — districts, businesses, names, rivals, events, jobs, and family situations
-- js/systems.js — connected legal, action, business, and diplomacy systems
-- server.mjs — optional local development server
-- build.mjs — rebuilds the standalone index.html after source edits
+```
+MADE/
+├── index.html          page shell and script loading order
+├── css/
+│   └── style.css       responsive visual system
+├── js/
+│   ├── data.js         districts, businesses, names, rivals, events, jobs
+│   ├── app.js          state, simulation loop, rendering, saves
+│   └── systems.js      legal, prison, action, business, diplomacy systems
+├── server.mjs          optional local development server
+└── build.mjs           package structure check
+```
 
 ## Development notes
 
-Built with vanilla JavaScript, HTML5, and CSS. The standalone index.html bundles the source in js/data.js, js/app.js, and js/systems.js for local file use. Run node build.mjs after editing a source file. The game version is 0.1.0 and the save schema is version 1. The game uses fictional, abstract mechanics and does not model real criminal procedures.
+Built with vanilla JavaScript, HTML5, and CSS. The package is split into data, application, and connected systems files. Run node build.mjs to confirm the expected package files are present. The game version is 0.1.0 and the save schema is version 1. The game uses fictional, abstract mechanics and does not model real criminal procedures.
