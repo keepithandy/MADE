@@ -1,0 +1,121 @@
+/* Element defaults and accessibility. Component rules live separately. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  scrollbar-color: var(--line-strong) var(--bg);
+  scroll-padding-top: 5rem;
+}
+
+body {
+  margin: 0;
+  min-width: 280px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  color: var(--ink);
+  background: var(--bg);
+  font: var(--text-base) / 1.6 var(--font-body);
+  -webkit-text-size-adjust: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button,
+input,
+select,
+label.btn {
+  touch-action: manipulation;
+}
+
+button,
+input,
+select,
+textarea,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible,
+label.btn:focus-within {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+}
+
+button:disabled,
+input:disabled,
+select:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+h1,
+h2,
+h3 {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-weight: 400;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+p {
+  color: var(--text-body);
+}
+
+button,
+h1,
+h2,
+h3,
+p,
+small,
+b,
+strong {
+  overflow-wrap: anywhere;
+}
+
+a {
+  color: var(--gold);
+  text-underline-offset: 0.2em;
+}
+
+::selection {
+  color: var(--on-gold);
+  background: var(--gold);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.danger-text {
+  color: var(--red);
+}
+
+.good {
+  color: var(--green);
+}

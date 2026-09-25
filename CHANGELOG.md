@@ -14,3 +14,6 @@ Initial playable release.
 - Added thirty rotating opportunities, forty family situations, event eligibility, and remembered choices
 - Added automatic local saves plus JSON import and export
 - Split the deliverable into a small HTML shell, external CSS, data layer, application layer, and connected systems layer
+- Organized CSS into theme tokens, base rules, layouts, components, and responsive overrides
+- Refined the charcoal and brass theme, card hierarchy, financial ledgers, and form controls
+- Added consistent touch targets, long-content wrapping, responsive action rows, and reduced-motion support

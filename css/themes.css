@@ -1,0 +1,57 @@
+/* Theme tokens: change colors here to restyle the entire interface. */
+:root {
+  color-scheme: dark;
+
+  /* Surfaces, from the page canvas to raised controls. */
+  --bg: #161715;
+  --panel: #22231f;
+  --panel2: #2a2b25;
+  --surface-hover: #33342b;
+  --surface-inset: #1c1d19;
+  --line: #414237;
+  --line-strong: #67644e;
+
+  /* Text and semantic states. */
+  --ink: #f0ecdf;
+  --text-body: #d2cebf;
+  --muted: #b1ad9c;
+  --gold: #d5b779;
+  --gold-hover: #e6cc97;
+  --gold-wash: #d5b77912;
+  --on-gold: #211e16;
+  --red: #e09488;
+  --danger-bg: #512e29;
+  --danger-hover: #653a32;
+  --danger-border: #915b50;
+  --green: #a6bd91;
+  --track: #45463a;
+  --overlay: #10110ee6;
+
+  /* Type: installed fonts only, so the package works offline. */
+  --font-body: "Segoe UI", Arial, sans-serif;
+  --font-display: Georgia, "Times New Roman", serif;
+  --font-mono: Consolas, "Courier New", monospace;
+  --text-xs: 0.6875rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9375rem;
+
+  /* Shared rhythm, shape, and depth. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --shadow: 0 8px 24px #00000024;
+  --shadow-dialog: 0 24px 80px #00000070;
+  --content-width: 1460px;
+  --motion-fast: 140ms;
+  --z-nav: 3;
+  --z-dialog: 5;
+  --z-toast: 9;
+}

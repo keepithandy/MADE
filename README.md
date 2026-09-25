@@ -33,7 +33,12 @@ Progress saves automatically in browser localStorage. The Money screen includes 
 MADE/
 ├── index.html          page shell and script loading order
 ├── css/
-│   └── style.css       responsive visual system
+│   ├── style.css       entry point; imports local styles in order
+│   ├── themes.css      colors, type, spacing, shape, and depth tokens
+│   ├── base.css        element defaults, focus states, text utilities
+│   ├── layout.css      page shell, navigation, grids, and shared spacing
+│   ├── components.css  cards, buttons, ledger, districts, dialogs
+│   └── responsive.css  breakpoints and accessibility preferences
 ├── js/
 │   ├── data.js         districts, businesses, names, rivals, events, jobs
 │   ├── app.js          state, simulation loop, rendering, saves
@@ -41,6 +46,14 @@ MADE/
 ├── server.mjs          optional local development server
 └── build.mjs           package structure check
 ```
+
+## Theme editing
+
+Start with css/themes.css for palette, font, spacing, and shape changes. Components use those shared tokens so buttons, panels, and dialogs stay consistent. Edit css/components.css for an individual component, css/layout.css for page structure, and css/responsive.css for narrow screens.
+
+css/style.css loads these files in that order using local imports. Keep the complete css folder with index.html when copying the game. Changes apply on refresh; no bundling step is required. Typography uses system fonts and has no external font request.
+
+The narrow layouts stack the main columns, wrap long record names, and turn action rows into full-width controls. Hover effects apply only to devices that support hover. Reduced-motion settings disable transitions, and forced-color settings preserve control outlines.
 
 ## Development notes
 

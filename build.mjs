@@ -6,6 +6,11 @@ const root = dirname(fileURLToPath(import.meta.url));
 const required = [
   'index.html',
   'css/style.css',
+  'css/themes.css',
+  'css/base.css',
+  'css/layout.css',
+  'css/components.css',
+  'css/responsive.css',
   'js/data.js',
   'js/app.js',
   'js/systems.js'
