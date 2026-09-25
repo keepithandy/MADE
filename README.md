@@ -35,8 +35,9 @@ The package is organized into small files so each part is easy to review:
 - css/themes.css — colors, type, spacing, shape, and depth tokens
 - css/base.css — element defaults, focus states, and text utilities
 - css/layout.css — page shell, navigation, grids, and shared spacing
-- css/components.css — cards, buttons, ledgers, districts, and dialogs
-- css/responsive.css — breakpoints and accessibility preferences
+- css/components.css — stable cards, buttons, ledgers, districts, and dialogs
+- css/polish.css — presentation layer for visual depth, hierarchy, and interaction feedback
+- css/responsive.css — breakpoints, mobile QoL, and accessibility preferences
 - js/data.js — districts, businesses, names, rivals, events, and jobs
 - js/app.js — state, simulation loop, rendering, and saves
 - js/systems.js — legal, prison, action, business, and diplomacy systems
@@ -45,12 +46,12 @@ The package is organized into small files so each part is easy to review:
 
 ## Theme editing
 
-Start with css/themes.css for palette, font, spacing, and shape changes. Components use those shared tokens so buttons, panels, and dialogs stay consistent. Edit css/components.css for an individual component, css/layout.css for page structure, and css/responsive.css for narrow screens.
+Start with css/themes.css for palette, font, spacing, and shape changes. Components use those shared tokens so buttons, panels, and dialogs stay consistent. Edit css/components.css for stable component rules, css/polish.css for presentation-only refinement, css/layout.css for page structure, and css/responsive.css for narrow screens.
 
 css/style.css loads these files in order using local imports. Keep the complete css folder with index.html when copying the game. Changes apply on refresh; no bundling step is required. Typography uses system fonts and has no external font request.
 
-The narrow layouts stack the main columns, wrap long record names, and turn action rows into full-width controls. Hover effects apply only to devices that support hover. Reduced-motion settings disable transitions, and forced-color settings preserve control outlines.
+The narrow layouts stack the main columns, wrap long record names, make primary screen actions easier to reach, and turn compact action rows into full-width controls when space is tight. Hover effects apply only to devices that support hover. Reduced-motion settings disable transitions, and forced-color settings preserve control outlines.
 
 ## Development notes
 
-Built with vanilla JavaScript, HTML5, and CSS. The package is split into data, application, and connected systems files. Run node build.mjs to confirm the expected package files are present. The game version is 0.1.0 and the save schema is version 1. The game uses fictional, abstract mechanics and does not model real criminal procedures.
+Built with vanilla JavaScript, HTML5, and CSS. The package is split into data, application, connected systems, and layered presentation files. Run node build.mjs to confirm the expected package files are present. The game version is 0.1.0 and the save schema is version 1. The game uses fictional, abstract mechanics and does not model real criminal procedures.
