@@ -10,4 +10,6 @@ Initial playable release.
 - Added twenty business opportunities with monthly revenue and costs
 - Added family relationships, children, dynasty continuation, and records
 - Added investigation pressure, career ranks, financial ledger, and responsive navigation
+- Added abstract legal outcomes, prison months, business management, rival meetings, and monthly action limits
+- Added thirty rotating opportunities, forty family situations, event eligibility, and remembered choices
 - Added automatic local saves plus JSON import and export

@@ -12,11 +12,14 @@ MADE is an original, offline-first life and organization simulator set in fictio
 - Family relationships, children, succession, and dynasty history
 - Twenty business opportunities with revenue, expenses, and asset sales
 - District influence, investigation pressure, and career progression
+- Limited monthly actions, rival meetings, business upgrades, and manager appointments
+- Thirty rotating opportunity templates and forty family relationship situations
+- Abstract legal hearings, convictions, prison months, and return to play
 - Chronological records, automatic browser saves, and JSON import/export
 
 ## Run locally
 
-Double click index.html to play in a regular browser. No server, packages, account, backend, or API keys are needed. The optional typeface import falls back to system fonts offline.
+Double click index.html to play in a regular browser. No server, packages, account, backend, API keys, or network connection are needed.
 
 ## Controls and saves
 
@@ -29,10 +32,11 @@ Progress saves automatically in browser localStorage. The Money screen includes 
 - index.html — standalone, double-clickable game
 - css/style.css — responsive interface
 - js/app.js — simulation, actions, rendering, and saves
-- js/data.js — districts, business offers, names, rivals, and event library
+- js/data.js — districts, businesses, names, rivals, events, jobs, and family situations
+- js/systems.js — connected legal, action, business, and diplomacy systems
 - server.mjs — optional local development server
 - build.mjs — rebuilds the standalone index.html after source edits
 
 ## Development notes
 
-Built with vanilla JavaScript, HTML5, and CSS. The standalone index.html bundles the source in js/data.js and js/app.js for local file use. Run node build.mjs after editing either source file. The game version is 0.1.0 and the save schema is version 1. The game uses fictional, abstract mechanics and does not model real criminal procedures.
+Built with vanilla JavaScript, HTML5, and CSS. The standalone index.html bundles the source in js/data.js, js/app.js, and js/systems.js for local file use. Run node build.mjs after editing a source file. The game version is 0.1.0 and the save schema is version 1. The game uses fictional, abstract mechanics and does not model real criminal procedures.
